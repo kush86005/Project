@@ -1,1 +1,1 @@
-Projects for resume 
+Project for resume.
