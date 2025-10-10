@@ -15,20 +15,20 @@ public class Graph {
         }
     }
 
-    // Add a city
+    // Add a city (stored in lowercase)
     public boolean addCity(String city) {
         if (city == null || city.trim().isEmpty()) return false;
-        city = city.trim();
+        city = city.trim().toLowerCase();
         if (adjList.containsKey(city)) return false;
         adjList.put(city, new ArrayList<>());
         return true;
     }
 
-    // Add an undirected road
+    // Add an undirected road (case-insensitive)
     public boolean addRoad(String src, String dest, int distance) {
         if (src == null || dest == null) return false;
-        src = src.trim();
-        dest = dest.trim();
+        src = src.trim().toLowerCase();
+        dest = dest.trim().toLowerCase();
         if (src.isEmpty() || dest.isEmpty()) return false;
         if (src.equals(dest) || distance <= 0) return false;
 
@@ -54,18 +54,24 @@ public class Graph {
         List<String> cities = new ArrayList<>(adjList.keySet());
         Collections.sort(cities);
         for (String city : cities) {
-            System.out.print(city + " -> ");
+            System.out.print(capitalize(city) + " -> ");
             List<Edge> edges = adjList.get(city);
             edges.sort(Comparator.comparing(e -> e.destination));
             for (Edge e : edges) {
-                System.out.print(e.destination + "(" + e.distance + "km) ");
+                System.out.print(capitalize(e.destination) + "(" + e.distance + "km) ");
             }
             System.out.println();
         }
     }
 
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
     // BFS
     public void bfs(String start) {
+        start = start.trim().toLowerCase();
         if (!adjList.containsKey(start)) {
             System.out.println("City not found in graph!");
             return;
@@ -79,7 +85,7 @@ public class Graph {
         System.out.print("BFS Traversal: ");
         while (!queue.isEmpty()) {
             String city = queue.poll();
-            System.out.print(city + " ");
+            System.out.print(capitalize(city) + " ");
             for (Edge e : adjList.get(city)) {
                 if (!visited.contains(e.destination)) {
                     visited.add(e.destination);
@@ -92,6 +98,7 @@ public class Graph {
 
     // DFS
     public void dfs(String start) {
+        start = start.trim().toLowerCase();
         if (!adjList.containsKey(start)) {
             System.out.println("City not found in graph!");
             return;
@@ -105,7 +112,7 @@ public class Graph {
 
     private void dfsHelper(String city, Set<String> visited) {
         visited.add(city);
-        System.out.print(city + " ");
+        System.out.print(capitalize(city) + " ");
         for (Edge e : adjList.get(city)) {
             if (!visited.contains(e.destination)) {
                 dfsHelper(e.destination, visited);
@@ -115,6 +122,9 @@ public class Graph {
 
     // Dijkstra
     public void dijkstra(String src, String dest) {
+        src = src.trim().toLowerCase();
+        dest = dest.trim().toLowerCase();
+
         if (!adjList.containsKey(src) || !adjList.containsKey(dest)) {
             System.out.println("Source or destination city does not exist.");
             return;
@@ -143,7 +153,7 @@ public class Graph {
         }
 
         if (distance.get(dest) == Integer.MAX_VALUE) {
-            System.out.println("No path exists between " + src + " and " + dest);
+            System.out.println("No path exists between " + capitalize(src) + " and " + capitalize(dest));
             return;
         }
 
@@ -155,7 +165,8 @@ public class Graph {
         }
         Collections.reverse(path);
 
-        System.out.println("Shortest path from " + src + " to " + dest + ": " + String.join(" -> ", path));
+        System.out.println("Shortest path from " + capitalize(src) + " to " + capitalize(dest) + ": " +
+                String.join(" -> ", path.stream().map(this::capitalize).toList()));
         System.out.println("Total distance: " + distance.get(dest) + " km");
     }
 }
