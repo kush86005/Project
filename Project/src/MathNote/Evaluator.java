@@ -38,21 +38,40 @@ public class Evaluator {
         return values.pop();
     }
 
-    // Solve simple linear equation like "x + 5 = 12"
+    // Solve any linear equation like "2x + 3x - 4 = 21"
     public static double solveEquation(String eq) {
-        eq = eq.replaceAll(" ", "");
-        String[] parts = eq.split("=");
-        String lhs = parts[0];
-        double rhs = Double.parseDouble(parts[1]);
+        eq = eq.replaceAll(" ", "");          // remove spaces
+        String[] sides = eq.split("=");       // split LHS and RHS
+        if (sides.length != 2)
+            throw new IllegalArgumentException("Equation format not supported!");
 
-        if (lhs.contains("x")) {
-            lhs = lhs.replace("x", "");
-            if (lhs.equals("+") || lhs.isEmpty()) return rhs;
-            else if (lhs.startsWith("+")) return rhs - Double.parseDouble(lhs.substring(1));
-            else if (lhs.startsWith("-")) return rhs + Double.parseDouble(lhs.substring(1));
+        String lhs = sides[0];
+        double rhs = Double.parseDouble(sides[1]);
+
+        // convert "-" to "+-" so we can split by "+"
+        lhs = lhs.replace("-", "+-");
+        String[] terms = lhs.split("\\+");
+
+        double coef = 0;      // sum of x coefficients
+        double constant = 0;  // sum of constant numbers
+
+        for (String term : terms) {
+            if (term.isEmpty()) continue;
+
+            if (term.contains("x")) {
+                String c = term.replace("x", "");
+                if (c.equals("") || c.equals("+")) c = "1";
+                else if (c.equals("-")) c = "-1";
+                coef += Double.parseDouble(c);
+            } else {
+                constant += Double.parseDouble(term);
+            }
         }
 
-        throw new IllegalArgumentException("Equation format not supported!");
+        if (coef == 0)
+            throw new IllegalArgumentException("No x term found or invalid equation.");
+
+        return (rhs - constant) / coef;
     }
 
     private static boolean isOperator(String token) {

@@ -10,7 +10,7 @@ public class MathSolver {
 
         while (true) {
             System.out.println("\n1. Evaluate Expression (e.g., 5 + 3 * 2)");
-            System.out.println("2. Solve Simple Equation (e.g., x + 5 = 12)");
+            System.out.println("2. Solve Equation (e.g., 2x + 3x - 4= 21)");
             System.out.println("3. Exit");
             System.out.print("Enter choice: ");
             String line = sc.nextLine().trim();
@@ -29,7 +29,7 @@ public class MathSolver {
                 }
 
             } else if (line.equals("2")) {
-                System.out.print("Enter equation (e.g., x + 5 = 12): ");
+                System.out.print("Enter equation (e.g., 2x + 3x - 4= 21): ");
                 String eq = sc.nextLine();
                 try {
                     double x = Evaluator.solveEquation(eq);
